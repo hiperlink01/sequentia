@@ -1,3 +1,5 @@
+import os
+
 class Board:
 
     def _generate_board(self, line_qtt, collumn_qtt) -> list[list[int]]:
@@ -11,25 +13,6 @@ class Board:
             board.append([])
             for j in range(collumn_qtt):
                 board[i].append(0)
-        """
-        #generating board representation ordered by lines, mirrored
-        #(for processing right swipes)
-
-        regular_mirrored: list[list[int]] = regular[::-1]
-
-        #generating board representation ordered by collumns, non mirrored
-        #(for processing upper swipes)
-
-        transposed: list[list[int]] = []
-        aux: list[list[int]] = []
-
-        for i in range(collumn_qtt):
-            transposed.append([])
-            for j in range(line_qtt):
-              transposed[i].append(0)
-        
-        transposed_mirrored: list[list[int]] = transposed[::-1]
-        """
 
         return board
 
@@ -43,6 +26,17 @@ class Board:
         
         self._seq: str = sequence
         self._board: list[list[int]] = self._generate_board(self._line_qtt, self._collumn_qtt)
+
+    def __str__(self) -> str:
+        repr = ""
+
+        for line in self._board:
+            repr += '|'
+            repr += str(line).replace(']', '').replace('[', '').replace(',', ' ')
+            repr += '|'
+            repr += '\n'
+
+        return repr
 
     def _transpose(self):
 
@@ -207,13 +201,13 @@ board._board = [
     [8,4,2,0]
 ]
 
-for line in board._board:
-    print(f"{line}")
+print(board)
 
 while True:
     player_action = input("enter an action\n>>")
 
     board.swipe(player_action)
 
-    for line in board._board:
-        print(f"{line}")
+    os.system("clear")
+
+    print(board)
