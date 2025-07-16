@@ -5,7 +5,7 @@ Personal project that involves:
 1. Making a 2048 clone
 2. Building upon it
 
-ROADMAP:
+## ROADMAP:
 
 ### 1. DEVELOP CORE GAME LOGIC
 - [x] ~~Board generation~~
