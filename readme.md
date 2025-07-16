@@ -7,32 +7,32 @@ Personal project that involves:
 
 ## ROADMAP:
 
-### 1. DEVELOP CORE GAME LOGIC
+### 1. CORE GAME LOGIC
 - [x] ~~Board generation~~
 - [x] ~~Movements~~
 - [ ] Random spawning of new number
 - [ ] Win condition
 - [ ] Lose condition
 
-### 2. BUILD GRAPHICAL USER INTERFACE (GUI)
+### 2. GRAPHICAL USER INTERFACE (GUI)
 - [ ] Menus
 - [ ] Game board
 
-### 3. BUILD DATABASE
+### 3. DATABASE
 - [ ] Ranking (play time, date-time, score, player name)
 - [ ] Game saving, loading, deleting
 
-### 4. IMPLEMENT GAME CUSTOMIZATION
+### 4. GAME CUSTOMIZATION
 - [ ] Board size variable; then, selectable; finally, customizable
 - [ ] Different sequences (other geometric progressions, Fibonacci, etc.)
 
-### 5. IMPLEMENT NEW GAME MODES
+### 5. NEW GAME MODES
 - [ ] Time limit mode
 - [ ] Guess the sequence
 - [ ] Guess the sequence with a time limit
 (etc)
 
-### 6. IMPLEMENT COMPETITIVE GAMING
+### 6. COMPETITIVE GAMING
 - [ ] Local PVP
 - [ ] Develop AI; PVE (Player vs. Environment)
 - [ ] Online PVP
