@@ -14,7 +14,7 @@ _First started on 12th of July, 2025. A calm Saturday night._
 - [x] ~~Movements~~
 - [x] ~~Random spawning of new number~~
 - [x] ~~Win condition~~
-- [/] Lose condition (almost there)
+- [ ] ~~Los~~e ~~con~~dit~~ion~~ (almost there)
 
 ### 2. GRAPHICAL USER INTERFACE (GUI)
 - [ ] Learn pygame... 
