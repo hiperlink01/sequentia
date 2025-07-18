@@ -1,20 +1,7 @@
 import os
+from random import randint, choice
 
 class Board:
-
-    def _generate_board(self, line_qtt, collumn_qtt) -> list[list[int]]:
-        
-        #generating board representation ordered by lines, non-mirrored
-        #(for processing left swipes)
-
-        board: list[list[int]] = []
-
-        for i in range(line_qtt):
-            board.append([])
-            for j in range(collumn_qtt):
-                board[i].append(0)
-
-        return board
 
     def __init__(self, dimensions: dict, sequence: str):
 
@@ -25,8 +12,14 @@ class Board:
         self._last_collumn: int = self._collumn_qtt - 1
         
         self._seq: str = sequence
+        self._turn = 0
         self._board: list[list[int]] = self._generate_board(self._line_qtt, self._collumn_qtt)
+        self._occupied_positions: set[tuple[int,int]]= {(-1,-1)}
 
+        self._new_term()
+        self._update_occupied_positions()
+        self._new_turn()
+        
     def __str__(self) -> str:
         repr = ""
 
@@ -37,35 +30,6 @@ class Board:
             repr += '\n'
 
         return repr
-
-    def _transpose(self):
-
-        aux = []
-
-        for j in range(self._collumn_qtt):
-            aux.append([])
-            for i in range(self._line_qtt):
-                aux[j].append(self._board[i][j])
-        
-        self._board = aux[::]
-
-        aux = self._line_qtt
-        self._line_qtt = self._collumn_qtt
-        self._collumn_qtt = aux
-
-        aux = self._last_line
-        self._last_line = self._last_collumn
-        self._last_collumn = aux
-
-    def _mirror(self):
-
-        aux_mtx = self._generate_board(self._line_qtt, self._collumn_qtt)
-
-        for i in range(self._line_qtt):
-            for j in range(self._collumn_qtt):
-                aux_mtx[i][self._last_collumn - j] = self._board[i][j]
-
-        self._board = aux_mtx[::]
 
     def swipe(self, direction: str):
 
@@ -132,7 +96,7 @@ class Board:
                 else: pass
                 #if a zero item is found, do nothing, go for the next
 
-            # REPOSITION PHASE:
+            # RELOCATION PHASE:
 
             for fst_seeker_reloc in range(1, self._line_qtt, +1):
             #check every item in the line except the leftmost (won't be repositioned)
@@ -191,20 +155,104 @@ class Board:
             case 'D':
                 self._mirror()
 
+        self._update_occupied_positions()
+        self._new_term()
+        self._new_turn()
+
+    def _generate_board(self, line_qtt, collumn_qtt) -> list[list[int]]:
+        
+        board: list[list[int]] = []
+
+        for i in range(line_qtt):
+            board.append([])
+            for j in range(collumn_qtt):
+                board[i].append(0)
+
+        return board
+
+    def _update_occupied_positions(self):
+        
+        for i in range(self._line_qtt):
+            for j in range(self._collumn_qtt):
+                if self._board[i][j] != 0:
+                    self._occupied_positions.add((i,j))
+                else:
+                    self._occupied_positions.discard((i,j))
+
+    def _new_term(self):
+
+        how_many: int
+
+        if self._turn == 0:
+        #if no turns exist, it means the board is newly generated,
+            how_many = 2
+            #so we initiate 2 elements to the board
+            self._occupied_positions.remove((-1,-1))
+            #and remove the dummy coordinate (-1,-1);
+        else: how_many = 1
+            #but if there are any turns, it means we're in the middle of the game,
+            #therefore only 1 element will be initiated
+            #ps.:
+            #._turn is incremented by ._new_turn() 
+
+        for term in range(how_many):
+
+            new: tuple[int,int] = (randint(0, self._last_line),  randint(0, self._last_collumn))
+
+            while(new in self._occupied_positions):
+            #until it's different from an occupied position.
+                new = (randint(0, self._last_line),  randint(0, self._last_collumn))
+                #randomize pairs
+
+            self._board[new[0]][new[1]] = 2 if randint(1, 100) <= 90 else 4
+            #in the unnocuppied position:
+            #insert either a 2 (90% chance); or a 4 (10% chance)
+
+            self._occupied_positions.add(new)
+            #update with the newly occupied position
+            #(especially important when initialing the board)
+
+    def _new_turn(self):
+        #this method is expected to receive more tasks than this
+        self._turn+=1
+
+    def _transpose(self):
+
+        aux = []
+
+        for j in range(self._collumn_qtt):
+            aux.append([])
+            for i in range(self._line_qtt):
+                aux[j].append(self._board[i][j])
+        
+        self._board = aux[::]
+
+        aux = self._line_qtt
+        self._line_qtt = self._collumn_qtt
+        self._collumn_qtt = aux
+
+        aux = self._last_line
+        self._last_line = self._last_collumn
+        self._last_collumn = aux
+
+    def _mirror(self):
+
+        aux_mtx = self._generate_board(self._line_qtt, self._collumn_qtt)
+
+        for i in range(self._line_qtt):
+            for j in range(self._collumn_qtt):
+                aux_mtx[i][self._last_collumn - j] = self._board[i][j]
+
+        self._board = aux_mtx[::]
+
 board = Board({"lin":4,"col":4}, "2048")
 
-board._board = [
-    
-    [0,2,0,0],
-    [0,4,0,4],
-    [0,0,0,0],
-    [8,4,2,0]
-]
+os.system("clear")
 
 print(board)
 
 while True:
-    player_action = input("enter an action\n>>")
+    player_action = input("enter an action\n>>").upper()
 
     board.swipe(player_action)
 
