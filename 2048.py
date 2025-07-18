@@ -1,5 +1,5 @@
 import os
-from random import randint, choice
+from random import randint
 
 class Board:
 

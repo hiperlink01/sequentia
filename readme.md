@@ -10,7 +10,7 @@ Personal project that involves:
 ### 1. CORE GAME LOGIC
 - [x] ~~Board generation~~
 - [x] ~~Movements~~
-- [ ] Random spawning of new number
+- [x] ~~Random spawning of new number~~
 - [ ] Win condition
 - [ ] Lose condition
 
