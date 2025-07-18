@@ -157,6 +157,9 @@ class Board:
 
         self._update_occupied_positions()
         self._new_term()
+        #at the end of this function,
+        #the i,j pair of the new term
+        #is added to our set of tuples: ._occupied_positions 
         self._new_turn()
 
     def _generate_board(self, line_qtt, collumn_qtt) -> list[list[int]]:
@@ -245,17 +248,21 @@ class Board:
 
         self._board = aux_mtx[::]
 
-board = Board({"lin":4,"col":4}, "2048")
-
-os.system("clear")
-
-print(board)
-
-while True:
-    player_action = input("enter an action\n>>").upper()
-
-    board.swipe(player_action)
+def main():
+    board = Board({"lin":4,"col":4}, "2048")
 
     os.system("clear")
 
     print(board)
+
+    while True:
+        player_action = input("enter an action\n>>").upper()
+
+        board.swipe(player_action)
+
+        os.system("clear")
+
+        print(board)
+
+if __name__ == "__main__":
+    main()
