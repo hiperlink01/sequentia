@@ -3,9 +3,9 @@
 
 Personal project that involves:
 1. Making a 2048 clone
-2. Building upon it
+2. Building upon it (check roadmap)
 
-_First started on 12 Jul 2025, a Saturday_
+_First started on 12th of July, 2025. A calm Saturday night._
 
 ## ROADMAP:
 
@@ -13,20 +13,22 @@ _First started on 12 Jul 2025, a Saturday_
 - [x] ~~Board generation~~
 - [x] ~~Movements~~
 - [x] ~~Random spawning of new number~~
-- [ ] Win condition
-- [ ] Lose condition
+- [x] ~~Win condition~~
+- [/] Lose condition (almost there)
 
 ### 2. GRAPHICAL USER INTERFACE (GUI)
+- [ ] Learn pygame... 
 - [ ] Menus
 - [ ] Game board
 
 ### 3. DATABASE
 - [ ] Ranking (play time, date-time, score, player name)
 - [ ] Game saving, loading, deleting
+- [ ] Player saves
 
 ### 4. GAME CUSTOMIZATION
 - [ ] Board size variable; then, selectable; finally, customizable
-- [ ] Different sequences (other geometric progressions, Fibonacci, etc.)
+- [ ] Different sequences (arithmetic progressions, geometrics other than 2^n, Fibonacci, conditioned sequences...)
 
 ### 5. NEW GAME MODES
 - [ ] Time limit mode
