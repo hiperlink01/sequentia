@@ -5,6 +5,8 @@ Personal project that involves:
 1. Making a 2048 clone
 2. Building upon it
 
+_First started on 12 Jul 2025, a Saturday_
+
 ## ROADMAP:
 
 ### 1. CORE GAME LOGIC
