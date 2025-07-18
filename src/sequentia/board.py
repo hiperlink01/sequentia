@@ -1,4 +1,3 @@
-import os
 from random import randint
 
 class Board:
@@ -15,6 +14,7 @@ class Board:
         self._turn = 0
         self._board: list[list[int]] = self._generate_board(self._line_qtt, self._collumn_qtt)
         self._occupied_positions: set[tuple[int,int]]= {(-1,-1)}
+        self._any_change: bool = False
 
         self._new_term()
         self._update_occupied_positions()
@@ -31,7 +31,7 @@ class Board:
 
         return repr
 
-    def swipe(self, direction: str):
+    def swipe(self, direction: str) -> str:
 
         match direction:
             case 'W':
@@ -55,50 +55,95 @@ class Board:
         
         for i in range(self._line_qtt):
         #lock on a line
+            if self._seek_arr_prog(i): self._any_change = True
+            if self._seek_arr_reloc(i): self._any_change = True
+            #if the progression phase or the relocation phase flags any changes
+            #we will update the turn later in the code
+           
+        match direction:
+            case 'W':
+                self._transpose()
+            case 'A':
+                pass
+            case 'S':
+                self._mirror() 
+                self._transpose()
+            case 'D':
+                self._mirror()
+        
+        if not self._any_change:    
+            if self._line_qtt*self._collumn_qtt == len(self._occupied_positions):
+                return 'L'
+            else:
+                return 'C'
+        else:
+            for line in self._board:
+                if 2048 in line: 
+                    self._any_change = False
+                    return 'W'
+            else: 
+                self._update_occupied_positions()
+                self._new_term()
+                self._new_turn()
+                self._any_change = False
+                return 'C'
+        #at the end of ._new_term(),
+        #the i,j pair of the new term
+        #is added to ._occupied_positions 
+        
+    def _seek_arr_prog(self, i):
 
-            # PROGRESSION PHASE
+        change = False
 
-            for fst_seeker_prog in range(self._collumn_qtt-1):
-            #check each item (i.e. each collumn) on that line except the rightmost one (will be checked by 2nd seeker)
-            #(this first iteration inside lines is only to progress the sequences.)
+        # PROGRESSION PHASE
 
-                left_item_prog = self._board[i][fst_seeker_prog]
-                #alias to make code more readable
+        for fst_seeker_prog in range(self._collumn_qtt-1):
+        #check each item (i.e. each collumn) on that line except the rightmost one (will be checked by 2nd seeker)
+        #(this first iteration inside lines is only to progress the sequences.)
 
-                if left_item_prog != 0:
-                #if a non-zero item is found
+            left_item_prog = self._board[i][fst_seeker_prog]
+            #alias to make code more readable
 
-                    for snd_seeker_prog in range(fst_seeker_prog+1, self._collumn_qtt, +1):
-                    #start the second seeker, check every other item to the right 
+            if left_item_prog != 0:
+            #if a non-zero item is found
+
+                for snd_seeker_prog in range(fst_seeker_prog+1, self._collumn_qtt, +1):
+                #start the second seeker, check every other item to the right 
+                    
+                    right_item_prog = self._board[i][snd_seeker_prog]
+                    #alias to make code more readable
+
+                    if right_item_prog != 0:
+                    #if another non-zero item is found
+                        if right_item_prog == left_item_prog:
+                        #and if it is equal to our left item
+                            self._board[i][fst_seeker_prog] += right_item_prog
+                            #we add to the left item the value of the right (same as doubling the left)
+                            self._board[i][snd_seeker_prog] = 0
+                            #and nulify the left item.
+                            change = True
+                            #flag the change
+                        else: pass
+                        #if it isn't equal, just leave it as is
+
+                        fst_seeker_prog = snd_seeker_prog
+                        #our first seeker is set to the position of the second.
+                        #this is done so that, when reaching the first seeker's for statement, it is incremented
+                        #(therefore, it starts from the next element, or shuts down if it exceeds the last iteration value)
                         
-                        right_item_prog = self._board[i][snd_seeker_prog]
-                        #alias to make code more readable
+                        break
+                        #stop second seeker so that first seeker can start from its place immediately 
 
-                        if right_item_prog != 0:
-                        #if another non-zero item is found
-                            if right_item_prog == left_item_prog:
-                            #and if it is equal to our left item
-                                self._board[i][fst_seeker_prog] += right_item_prog
-                                #we add to the left item the value of the right (same as doubling the left)
-                                self._board[i][snd_seeker_prog] = 0
-                                #and nulify the left item.
-                            else: pass
-                            #if it isn't equal, just leave it as is
+            else: pass
+            #if a zero item is found, do nothing, go for the next
 
-                            fst_seeker_prog = snd_seeker_prog
-                            #our first seeker is set to the position of the second.
-                            #this is done so that, when reaching the first seeker's for statement, it is incremented
-                            #(therefore, it starts from the next element, or shuts down if it exceeds the last iteration value)
-                            
-                            break
-                            #stop second seeker so that first seeker can start from its place immediately 
+        return change
 
-                else: pass
-                #if a zero item is found, do nothing, go for the next
+    def _seek_arr_reloc(self, i):
 
-            # RELOCATION PHASE:
+        change = False
 
-            for fst_seeker_reloc in range(1, self._line_qtt, +1):
+        for fst_seeker_reloc in range(1, self._line_qtt, +1):
             #check every item in the line except the leftmost (won't be repositioned)
             #(this second iteration is only to position non-zero numbers together.)
                 
@@ -123,6 +168,8 @@ class Board:
                                 #move the right item immediately next to the left one
                                 self._board[i][fst_seeker_reloc] = 0
                                 #and nulify the previous position of right item
+                                change = True
+                                #flag the change
                             else: pass
                             #do nothing if it is immediately next
 
@@ -133,6 +180,8 @@ class Board:
                         #if we are here, it means the border is zero, and thus we can send the item here no problem
                             self._board[i][0] = right_item_reloc
                             self._board[i][fst_seeker_reloc] = 0
+                            change = True
+                            #flag the change
 
                             break
                             #this break is written for explicitness; it is unnecessary strictly speaking
@@ -143,24 +192,8 @@ class Board:
                 
                 else: pass
                 #if a 0 item is found, do nothing, just go for the next
-        
-        match direction:
-            case 'W':
-                self._transpose()
-            case 'A':
-                pass
-            case 'S':
-                self._mirror() 
-                self._transpose()
-            case 'D':
-                self._mirror()
 
-        self._update_occupied_positions()
-        self._new_term()
-        #at the end of this function,
-        #the i,j pair of the new term
-        #is added to our set of tuples: ._occupied_positions 
-        self._new_turn()
+        return change
 
     def _generate_board(self, line_qtt, collumn_qtt) -> list[list[int]]:
         
@@ -247,22 +280,3 @@ class Board:
                 aux_mtx[i][self._last_collumn - j] = self._board[i][j]
 
         self._board = aux_mtx[::]
-
-def main():
-    board = Board({"lin":4,"col":4}, "2048")
-
-    os.system("clear")
-
-    print(board)
-
-    while True:
-        player_action = input("enter an action\n>>").upper()
-
-        board.swipe(player_action)
-
-        os.system("clear")
-
-        print(board)
-
-if __name__ == "__main__":
-    main()

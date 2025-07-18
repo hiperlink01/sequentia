@@ -1,5 +1,5 @@
 # SEQUENTIA
-### (for now, just a 2048 clone)
+#### (for now, just a 2048 clone)
 
 Personal project that involves:
 1. Making a 2048 clone
