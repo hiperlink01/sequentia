@@ -11,19 +11,16 @@ class Board:
         self._last_collumn: int = self._collumn_qtt - 1
         
         self._seq: str = sequence
-        self._turn = 0
-        self._board: list[list[int]] = self._generate_board(self._line_qtt, self._collumn_qtt)
+        self._grid: list[list[int]] = self._generate_grid(self._line_qtt, self._collumn_qtt)
         self._occupied_positions: set[tuple[int,int]]= {(-1,-1)}
-        self._any_change: bool = False
 
         self._new_term()
         self._update_occupied_positions()
-        self._new_turn()
         
     def __str__(self) -> str:
         repr = ""
 
-        for line in self._board:
+        for line in self._grid:
             repr += '|'
             repr += str(line).replace(']', '').replace('[', '').replace(',', ' ')
             repr += '|'
@@ -31,7 +28,7 @@ class Board:
 
         return repr
 
-    def swipe(self, direction: str) -> str:
+    def swipe(self, direction: str):
 
         match direction:
             case 'W':
@@ -53,10 +50,12 @@ class Board:
         #bottom_item_reloc, reads "bottom item of relocation phase")
         #etc
         
+        any_change = False
+
         for i in range(self._line_qtt):
         #lock on a line
-            if self._seek_arr_prog(i): self._any_change = True
-            if self._seek_arr_reloc(i): self._any_change = True
+            if self._seek_arr_prog(i): any_change = True
+            if self._seek_arr_reloc(i): any_change = True
             #if the progression phase or the relocation phase flags any changes
             #we will update the turn later in the code
            
@@ -71,25 +70,15 @@ class Board:
             case 'D':
                 self._mirror()
         
-        if not self._any_change:    
-            if self._line_qtt*self._collumn_qtt == len(self._occupied_positions):
-                return 'L'
-            else:
-                return 'C'
-        else:
-            for line in self._board:
-                if 2048 in line: 
-                    self._any_change = False
-                    return 'W'
-            else: 
-                self._update_occupied_positions()
-                self._new_term()
-                self._new_turn()
-                self._any_change = False
-                return 'C'
-        #at the end of ._new_term(),
-        #the i,j pair of the new term
-        #is added to ._occupied_positions 
+        if any_change:
+            self._update_occupied_positions()
+            self._new_term()
+                #at the end of ._new_term(),
+                #the i,j pair of the new term
+                #is added to ._occupied_positions 
+
+
+        return any_change
         
     def _seek_arr_prog(self, i):
 
@@ -101,7 +90,7 @@ class Board:
         #check each item (i.e. each collumn) on that line except the rightmost one (will be checked by 2nd seeker)
         #(this first iteration inside lines is only to progress the sequences.)
 
-            left_item_prog = self._board[i][fst_seeker_prog]
+            left_item_prog = self._grid[i][fst_seeker_prog]
             #alias to make code more readable
 
             if left_item_prog != 0:
@@ -110,16 +99,16 @@ class Board:
                 for snd_seeker_prog in range(fst_seeker_prog+1, self._collumn_qtt, +1):
                 #start the second seeker, check every other item to the right 
                     
-                    right_item_prog = self._board[i][snd_seeker_prog]
+                    right_item_prog = self._grid[i][snd_seeker_prog]
                     #alias to make code more readable
 
                     if right_item_prog != 0:
                     #if another non-zero item is found
                         if right_item_prog == left_item_prog:
                         #and if it is equal to our left item
-                            self._board[i][fst_seeker_prog] += right_item_prog
+                            self._grid[i][fst_seeker_prog] += right_item_prog
                             #we add to the left item the value of the right (same as doubling the left)
-                            self._board[i][snd_seeker_prog] = 0
+                            self._grid[i][snd_seeker_prog] = 0
                             #and nulify the left item.
                             change = True
                             #flag the change
@@ -147,7 +136,7 @@ class Board:
             #check every item in the line except the leftmost (won't be repositioned)
             #(this second iteration is only to position non-zero numbers together.)
                 
-                right_item_reloc = self._board[i][fst_seeker_reloc]
+                right_item_reloc = self._grid[i][fst_seeker_reloc]
                 #alias to make code more readable
                 #(now we must check positions to the left of our first seeker, thus such an alias)
 
@@ -157,16 +146,16 @@ class Board:
                     for snd_seeker_reloc in range(fst_seeker_reloc-1, -1, -1):
                     #start the second seeker, checking positions to the left of the first
 
-                        left_item_reloc = self._board[i][snd_seeker_reloc]
+                        left_item_reloc = self._grid[i][snd_seeker_reloc]
                         #alias to make code more readable
                         
                         if left_item_reloc != 0:
                         #if another non-zero item is found
                             if snd_seeker_reloc+1 < fst_seeker_reloc:
                             #and it isn't immediately next our item to the right
-                                self._board[i][snd_seeker_reloc+1] = right_item_reloc
+                                self._grid[i][snd_seeker_reloc+1] = right_item_reloc
                                 #move the right item immediately next to the left one
-                                self._board[i][fst_seeker_reloc] = 0
+                                self._grid[i][fst_seeker_reloc] = 0
                                 #and nulify the previous position of right item
                                 change = True
                                 #flag the change
@@ -178,8 +167,8 @@ class Board:
 
                         elif snd_seeker_reloc == 0:
                         #if we are here, it means the border is zero, and thus we can send the item here no problem
-                            self._board[i][0] = right_item_reloc
-                            self._board[i][fst_seeker_reloc] = 0
+                            self._grid[i][0] = right_item_reloc
+                            self._grid[i][fst_seeker_reloc] = 0
                             change = True
                             #flag the change
 
@@ -195,22 +184,22 @@ class Board:
 
         return change
 
-    def _generate_board(self, line_qtt, collumn_qtt) -> list[list[int]]:
+    def _generate_grid(self, line_qtt, collumn_qtt) -> list[list[int]]:
         
-        board: list[list[int]] = []
+        grid: list[list[int]] = []
 
         for i in range(line_qtt):
-            board.append([])
+            grid.append([])
             for j in range(collumn_qtt):
-                board[i].append(0)
+                grid[i].append(0)
 
-        return board
+        return grid
 
     def _update_occupied_positions(self):
         
         for i in range(self._line_qtt):
             for j in range(self._collumn_qtt):
-                if self._board[i][j] != 0:
+                if self._grid[i][j] != 0:
                     self._occupied_positions.add((i,j))
                 else:
                     self._occupied_positions.discard((i,j))
@@ -219,17 +208,15 @@ class Board:
 
         how_many: int
 
-        if self._turn == 0:
-        #if no turns exist, it means the board is newly generated,
+        if (-1,-1) in self._occupied_positions:
+        #if the dummy coordinate is present, it means the board is newly generated,
             how_many = 2
             #so we initiate 2 elements to the board
             self._occupied_positions.remove((-1,-1))
             #and remove the dummy coordinate (-1,-1);
         else: how_many = 1
-            #but if there are any turns, it means we're in the middle of the game,
+            #if there is no dummy coordinate, it means we're in the middle of the game,
             #therefore only 1 element will be initiated
-            #ps.:
-            #._turn is incremented by ._new_turn() 
 
         for term in range(how_many):
 
@@ -240,17 +227,13 @@ class Board:
                 new = (randint(0, self._last_line),  randint(0, self._last_collumn))
                 #randomize pairs
 
-            self._board[new[0]][new[1]] = 2 if randint(1, 100) <= 90 else 4
+            self._grid[new[0]][new[1]] = 2 if randint(1, 100) <= 90 else 4
             #in the unnocuppied position:
             #insert either a 2 (90% chance); or a 4 (10% chance)
 
             self._occupied_positions.add(new)
             #update with the newly occupied position
             #(especially important when initialing the board)
-
-    def _new_turn(self):
-        #this method is expected to receive more tasks than this
-        self._turn+=1
 
     def _transpose(self):
 
@@ -259,9 +242,9 @@ class Board:
         for j in range(self._collumn_qtt):
             aux.append([])
             for i in range(self._line_qtt):
-                aux[j].append(self._board[i][j])
+                aux[j].append(self._grid[i][j])
         
-        self._board = aux[::]
+        self._grid = aux[::]
 
         aux = self._line_qtt
         self._line_qtt = self._collumn_qtt
@@ -273,10 +256,10 @@ class Board:
 
     def _mirror(self):
 
-        aux_mtx = self._generate_board(self._line_qtt, self._collumn_qtt)
+        aux_mtx = self._generate_grid(self._line_qtt, self._collumn_qtt)
 
         for i in range(self._line_qtt):
             for j in range(self._collumn_qtt):
-                aux_mtx[i][self._last_collumn - j] = self._board[i][j]
+                aux_mtx[i][self._last_collumn - j] = self._grid[i][j]
 
-        self._board = aux_mtx[::]
+        self._grid = aux_mtx[::]
