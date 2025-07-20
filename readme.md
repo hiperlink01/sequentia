@@ -1,5 +1,5 @@
 # SEQUENTIA
-#### (for now, just a 2048 clone)
+#### _(for now, just a 2048 clone)_
 
 Personal project that involves:
 1. Making a 2048 clone
@@ -14,21 +14,24 @@ _First started on 12th of July, 2025. A calm Saturday night._
 - [x] ~~Movements~~
 - [x] ~~Random spawning of new number~~
 - [x] ~~Win condition~~
-- [ ] ~~Los~~e ~~con~~dit~~ion~~ (almost there)
+- [x] ~~Lose condition~~
+- [ ] Score count
+- [ ] Better CLI representation
 
-### 2. GRAPHICAL USER INTERFACE (GUI)
+### 2. NEW GAME LOGIC
+- [ ] Board size variable
+- [ ] Different sequences (arithmetic progressions, geometrics other than 2^n, Fibonacci, conditioned sequences...)
+- [ ] Selection of different boards and sequences
+
+### 3. GRAPHICAL USER INTERFACE (GUI)
 - [ ] Learn pygame... 
 - [ ] Menus
 - [ ] Game board
 
-### 3. DATABASE
+### 4. DATABASE
 - [ ] Ranking (play time, date-time, score, player name)
 - [ ] Game saving, loading, deleting
 - [ ] Player saves
-
-### 4. GAME CUSTOMIZATION
-- [ ] Board size variable; then, selectable; finally, customizable
-- [ ] Different sequences (arithmetic progressions, geometrics other than 2^n, Fibonacci, conditioned sequences...)
 
 ### 5. NEW GAME MODES
 - [ ] Time limit mode
