@@ -88,7 +88,7 @@ class Board:
 
         fst_seeker_prog: int = 0
 
-        while fst_seeker_prog <= self._last_collumn:
+        while fst_seeker_prog <= self._last_collumn-1:
         #check each item (i.e. each collumn) on that line except the rightmost one (will be checked by 2nd seeker)
         #(this first iteration inside lines is only to progress the sequences.)
 
@@ -119,9 +119,9 @@ class Board:
                         else: pass
                         #if it isn't equal, just leave it as is
 
-                        fst_seeker_prog = snd_seeker_prog
-                        #our first seeker is set to the position of the second.
-                        #this is done so that, when reaching the first seeker's for statement, it is incremented
+                        fst_seeker_prog = snd_seeker_prog-1
+                        #our first seeker is set to the position before the second.
+                        #this is done so that, when reaching the first seeker's increment statement, it is exactly on second seeker's previous position
                         #(therefore, it starts from the next element, or shuts down if it exceeds the last iteration value)
                         
                         break
