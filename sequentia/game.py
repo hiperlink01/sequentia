@@ -88,7 +88,7 @@ class Game:
             #checking last line horizontally
 
             for i in range(line_qtt-1):
-                if grid[i][last_collumn] == grid[i][last_collumn]:
+                if grid[i][last_collumn] == grid[i+1][last_collumn]:
                     return False
             #checking last collumn vertically
         

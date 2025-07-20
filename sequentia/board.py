@@ -86,7 +86,9 @@ class Board:
 
         # PROGRESSION PHASE
 
-        for fst_seeker_prog in range(self._collumn_qtt-1):
+        fst_seeker_prog: int = 0
+
+        while fst_seeker_prog < self._last_collumn:
         #check each item (i.e. each collumn) on that line except the rightmost one (will be checked by 2nd seeker)
         #(this first iteration inside lines is only to progress the sequences.)
 
@@ -96,7 +98,9 @@ class Board:
             if left_item_prog != 0:
             #if a non-zero item is found
 
-                for snd_seeker_prog in range(fst_seeker_prog+1, self._collumn_qtt, +1):
+                snd_seeker_prog: int = fst_seeker_prog+1
+
+                while snd_seeker_prog <= self._last_collumn:
                 #start the second seeker, check every other item to the right 
                     
                     right_item_prog = self._grid[i][snd_seeker_prog]
@@ -121,10 +125,14 @@ class Board:
                         #(therefore, it starts from the next element, or shuts down if it exceeds the last iteration value)
                         
                         break
-                        #stop second seeker so that first seeker can start from its place immediately 
+                        #stop second seeker so that first seeker can start from its place immediately
+
+                    snd_seeker_prog+=1 
 
             else: pass
             #if a zero item is found, do nothing, go for the next
+
+            fst_seeker_prog=+1
 
         return change
 
@@ -132,55 +140,63 @@ class Board:
 
         change = False
 
-        for fst_seeker_reloc in range(1, self._line_qtt, +1):
+        fst_seeker_reloc = 1
+
+        while fst_seeker_reloc <= self._last_line:
             #check every item in the line except the leftmost (won't be repositioned)
             #(this second iteration is only to position non-zero numbers together.)
                 
-                right_item_reloc = self._grid[i][fst_seeker_reloc]
-                #alias to make code more readable
-                #(now we must check positions to the left of our first seeker, thus such an alias)
+            right_item_reloc = self._grid[i][fst_seeker_reloc]
+            #alias to make code more readable
+            #(now we must check positions to the left of our first seeker, thus such an alias)
 
-                if right_item_reloc != 0:
-                #if non-zero value is found
+            if right_item_reloc != 0:
+            #if non-zero value is found
 
-                    for snd_seeker_reloc in range(fst_seeker_reloc-1, -1, -1):
-                    #start the second seeker, checking positions to the left of the first
+                snd_seeker_reloc = fst_seeker_reloc-1
 
-                        left_item_reloc = self._grid[i][snd_seeker_reloc]
-                        #alias to make code more readable
-                        
-                        if left_item_reloc != 0:
-                        #if another non-zero item is found
-                            if snd_seeker_reloc+1 < fst_seeker_reloc:
-                            #and it isn't immediately next our item to the right
-                                self._grid[i][snd_seeker_reloc+1] = right_item_reloc
-                                #move the right item immediately next to the left one
-                                self._grid[i][fst_seeker_reloc] = 0
-                                #and nulify the previous position of right item
-                                change = True
-                                #flag the change
-                            else: pass
-                            #do nothing if it is immediately next
+                while snd_seeker_reloc >= 0:
+                #start the second seeker, checking positions to the left of the first
 
-                            break
-                            #in any case, we stop the iteration because the farthest possible position was found
-
-                        elif snd_seeker_reloc == 0:
-                        #if we are here, it means the border is zero, and thus we can send the item here no problem
-                            self._grid[i][0] = right_item_reloc
+                    left_item_reloc = self._grid[i][snd_seeker_reloc]
+                    #alias to make code more readable
+                    
+                    if left_item_reloc != 0:
+                    #if another non-zero item is found
+                        if snd_seeker_reloc+1 < fst_seeker_reloc:
+                        #and it isn't immediately next our item to the right
+                            self._grid[i][snd_seeker_reloc+1] = right_item_reloc
+                            #move the right item immediately next to the left one
                             self._grid[i][fst_seeker_reloc] = 0
+                            #and nulify the previous position of right item
                             change = True
                             #flag the change
-
-                            break
-                            #this break is written for explicitness; it is unnecessary strictly speaking
-
                         else: pass
-                        #in other cases we are dealing necessarily with a zero item,
-                        #just keep searching until the border or a non-zero is found
-                
-                else: pass
-                #if a 0 item is found, do nothing, just go for the next
+                        #do nothing if it is immediately next
+
+                        break
+                        #in any case, we stop the iteration because the farthest possible position was found
+
+                    elif snd_seeker_reloc == 0:
+                    #if we are here, it means the border is zero, and thus we can send the item here no problem
+                        self._grid[i][0] = right_item_reloc
+                        self._grid[i][fst_seeker_reloc] = 0
+                        change = True
+                        #flag the change
+
+                        break
+                        #this break is written for explicitness; it is unnecessary strictly speaking
+
+                    else: pass
+                    #in other cases we are dealing necessarily with a zero item,
+                    #just keep searching until the border or a non-zero is found
+
+                    snd_seeker_reloc-=1
+            
+            else: pass
+            #if a 0 item is found, do nothing, just go for the next
+
+            fst_seeker_reloc+=1
 
         return change
 
