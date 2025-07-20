@@ -88,7 +88,7 @@ class Board:
 
         fst_seeker_prog: int = 0
 
-        while fst_seeker_prog < self._last_collumn:
+        while fst_seeker_prog <= self._last_collumn:
         #check each item (i.e. each collumn) on that line except the rightmost one (will be checked by 2nd seeker)
         #(this first iteration inside lines is only to progress the sequences.)
 
