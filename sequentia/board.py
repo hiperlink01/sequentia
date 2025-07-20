@@ -132,7 +132,7 @@ class Board:
             else: pass
             #if a zero item is found, do nothing, go for the next
 
-            fst_seeker_prog=+1
+            fst_seeker_prog+=1
 
         return change
 
