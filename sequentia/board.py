@@ -35,9 +35,10 @@ class Board:
         for i in range(self._line_qtt):
 
             if i == 0 or i == self._last_line:
-                line = str(self._grid[i]).replace(',', '|').replace(' ', '').replace('0', ' ')
+                line = str(self._grid[i]).replace('[','[ ').replace('0,',' |').replace(',','|').replace('0]',' ]')
             else:
-                line = str(self._grid[i]).replace(']', '|').replace('[', '|').replace(',', '|').replace(' ', '').replace('0', ' ') 
+                line = str(self._grid[i]).replace('[','| ').replace('0,',' |').replace(',','|').replace('0]',' |').replace(']','|')
+            
 
             repr += line + '\n'
 
