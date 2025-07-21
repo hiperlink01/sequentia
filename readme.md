@@ -15,8 +15,8 @@ _First started on 12th of July, 2025. A calm Saturday night._
 - [x] ~~Random spawning of new number~~
 - [x] ~~Win condition~~
 - [x] ~~Lose condition~~
-- [ ] Score count
-- [ ] Better CLI representation
+- [x] ~~Score count~~
+- [x] ~~Better CLI representation~~
 
 ### 2. NEW GAME LOGIC
 - [ ] Board size variable
