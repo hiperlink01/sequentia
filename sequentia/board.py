@@ -14,19 +14,62 @@ class Board:
         self._grid: list[list[int]] = self._generate_grid(self._line_qtt, self._collumn_qtt)
         self._occupied_positions: set[tuple[int,int]]= {(-1,-1)}
 
+        self._newly_computed_values: list[int] = []
+
         self._new_term()
         self._update_occupied_positions()
         
     def __str__(self) -> str:
+
         repr = ""
 
+        """
+        max_value = 0
         for line in self._grid:
-            repr += '|'
-            repr += str(line).replace(']', '').replace('[', '').replace(',', ' ')
-            repr += '|'
-            repr += '\n'
+            for item in line:
+                if item > max_value:
+                    max_value = item
+        cell_size = len(str(max_value))
+        """
+
+        for i in range(self._line_qtt):
+
+            if i == 0 or i == self._last_line:
+                line = str(self._grid[i]).replace(',', '|').replace(' ', '').replace('0', ' ')
+            else:
+                line = str(self._grid[i]).replace(']', '|').replace('[', '|').replace(',', '|').replace(' ', '').replace('0', ' ') 
+
+            repr += line + '\n'
 
         return repr
+
+    @property
+    def newly_computed_values(self):
+        return self._newly_computed_values
+
+    @property
+    def grid(self):
+        return self._grid
+    
+    @property
+    def line_qtt(self):
+        return self._line_qtt
+    
+    @property
+    def collumn_qtt(self):
+        return self._collumn_qtt
+    
+    @property
+    def last_line(self):
+        return self._last_line
+
+    @property
+    def last_collumn(self):
+        return self._last_collumn
+    
+    @property
+    def occupied_positions(self):
+        return self._occupied_positions
 
     def swipe(self, direction: str):
 
@@ -51,6 +94,10 @@ class Board:
         #etc
         
         any_change = False
+        self._newly_computed_values = []
+        #in every new swipe still to be computed,
+        #there is no change,
+        #and no new terms found by tile merging.
 
         for i in range(self._line_qtt):
         #lock on a line
@@ -73,10 +120,9 @@ class Board:
         if any_change:
             self._update_occupied_positions()
             self._new_term()
-                #at the end of ._new_term(),
-                #the i,j pair of the new term
-                #is added to ._occupied_positions 
-
+            #at the end of ._new_term(),
+            #the i,j pair of the new term
+            #is added to ._occupied_positions 
 
         return any_change
         
@@ -114,6 +160,9 @@ class Board:
                             #we add to the left item the value of the right (same as doubling the left)
                             self._grid[i][snd_seeker_prog] = 0
                             #and nulify the left item.
+                            self._newly_computed_values.append(self._grid[i][fst_seeker_prog])
+                            #store the value of the new sequence term in a list;
+                            #it will be gathered by Game and compute score.
                             change = True
                             #flag the change
                         else: pass

@@ -9,13 +9,15 @@ class Game:
     def _start(self):
 
         self._board = Board({"lin":4,"col":4}, "2048")
+        self._score = 0
         self._turn = 1
         self._result: str = 'C'
 
         self._game_time_counter = 0
 
         while self._result == 'C':
-            print(self._turn)
+            print(f"SCORE: {self._score}")
+            print(f"TURN: {self._turn}")
             print(self._board)
             self._result = self._new_turn()
             os.system("clear")
@@ -31,6 +33,8 @@ class Game:
 
         if any_change:
             self._turn+=1
+            for value in self._board.newly_computed_values:
+                self._score += value
             if self._check_for_win() == True: return 'W'
             if self._check_for_loss() == True: return 'L'
         
@@ -57,15 +61,15 @@ class Game:
 
         #aliases for the private data inside our board; too verbose otherwise.
         
-        grid: list[list[int]] = self._board._grid
+        grid: list[list[int]] = self._board.grid
         
-        line_qtt = self._board._line_qtt
-        collumn_qtt = self._board._collumn_qtt
+        line_qtt = self._board.line_qtt
+        collumn_qtt = self._board.collumn_qtt
 
-        last_line = self._board._last_line
-        last_collumn = self._board._last_collumn
+        last_line = self._board.last_line
+        last_collumn = self._board.last_collumn
         
-        occupied_positions: set[tuple[int,int]] = self._board._occupied_positions
+        occupied_positions: set[tuple[int,int]] = self._board.occupied_positions
 
         if len(occupied_positions) != line_qtt * collumn_qtt:
             return False

@@ -1,5 +1,4 @@
 from .game import Game
-from time import sleep
 
 def main(): Game()
     
