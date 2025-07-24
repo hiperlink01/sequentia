@@ -8,15 +8,17 @@ class Sequence(ABC):
     - A rule
 
     Terms can be described by their value and their index;
-    There must be a first arbitrary term.
-    These must, therefore, be three of our main pieces of data (attributes)
+    There must also be a first arbitrary term.
+    Thus, be these our three main instance attributes
 
     Sequence rules, for the matter of this game, must be recursive relations;
     Otherwise, this becomes purely a guessing game (how to know if the sequence is A-R-M or R-A-M?).
-    This must also be another main piece of data (a method).
+    This must be our main method
     """
 
     def __init__(self, first_term) -> None:
+        if not isinstance(first_term, int):
+            raise TypeError(f"Must be an integer sequence; first term: {first_term} violates.")
         self._first_term = first_term
         self._current_term = first_term
         self._current_term_index = 0
@@ -38,27 +40,19 @@ class Sequence(ABC):
         """
         pass
 
-"""
-arithmetic progressions doesn't seem to work;
-relying on constants,
-losing the game with such a sequence is impossible.
-Also, a tile for constants would have to be spawned.
-
-a completely different gamemode logic is to be made to implement them.
-
-"arithmeticum convivium":
-
 class ArithmeticProg(Sequence):
+    """
+    arithmetic progressions doesn't seem to work;
+    relying on constants,
+    losing the game with such a sequence is impossible.
+    Also, a tile for constants would have to be spawned.
 
-    def __init__(self, first_term, difference) -> None:
-        self._current_term = first_term
-        self._constant = difference
+    a completely different gamemode logic is to be made to implement them.
 
-    def _rule(self):
-        next_term = self._current_term
-
+    "arithmeticum convivium":
+    """
     pass
-"""
+
 class GeometricProg(Sequence):
 
     """
@@ -79,8 +73,17 @@ class GeometricProg(Sequence):
     With arithmetic and geometric sequences in a same game.
     """
 
-    def __init__(self) -> None:
-        self._first_term
+    def __init__(self, first_term, ratio):
+        if first_term == 0 or ratio == 0:
+            raise ValueError(f"First term: {first_term} or ratio: {ratio} must never be 0.")
+        elif ratio == 1:
+            raise ValueError(f"Ratio must never be 1.")
+        else:
+            super().__init__(first_term)
+            self._ratio = ratio
 
-class Sum(Sequence):
+class SumOfTwoTerms(Sequence):
+    """
+    Sequences such as Fibonacci
+    """
     pass
