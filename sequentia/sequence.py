@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod 
+from time import sleep
 
 class Sequence(ABC):
 
@@ -87,24 +88,28 @@ class TwoTerm(Sequence):
     """
     
     def __init__(self, index_relation: int = 0, operation: str = '+', fst_terms: list[int] = [2], index_of_last=10) -> None:
-        
-        self._terms = self._generate_sequence (
+        self._terms: tuple[int,...] = self._generate_sequence (
             fst_terms,
             index_relation,
             operation,
-            index_of_last
+            index_of_last-1
         )
 
-    def _generate_sequence(self, terms, index_relation, operation, index_of_last, ant_index=0):
+    def _generate_sequence(self, terms: list[int], index_relation: int, operation: str, index_of_last: int, ant_index=0) -> tuple[int, ...]:
 
         post_index = ant_index + index_relation
 
         self._rule(terms, ant_index, post_index, operation)
 
-        if post_index < index_of_last:
+        if post_index < index_of_last-1:
+        #when a new calculation is made, it always generates the next immediate term
+        #thus, when "post_index" is equal to the index before the last,
+        #we know our last element was generated already,
+        #and return our resulting tuple;
+        #otherwise, keep generating the sequence recursively
             
             ant_index+=1
-            self._generate_sequence(
+            return self._generate_sequence(
                 terms,
                 index_relation,
                 operation,
@@ -112,9 +117,9 @@ class TwoTerm(Sequence):
                 ant_index=ant_index
             )
 
-        else: return terms
+        else: return tuple(terms)
 
-    def _rule(self, terms: list[int], ant_index, post_index, operation: str):
+    def _rule(self, terms: list[int], ant_index: int, post_index: int, operation: str) -> None:
 
         ant = terms[ant_index]
         #anterior term
@@ -130,48 +135,47 @@ class TwoTerm(Sequence):
 class ThreeTerm:
     pass
 
-
-    """
-    class ArithmeticProg(Sequence):
-        
-        arithmetic progressions doesn't seem to work;
-        relying on constants,
-        losing the game with such a sequence is impossible.
-        Also, a tile for constants would have to be spawned.
-
-        a completely different gamemode logic is to be made to implement them.
-
-        "arithmeticum convivium":
-        
-        pass
+"""
+class ArithmeticProg(Sequence):
     
+    arithmetic progressions doesn't seem to work;
+    relying on constants,
+    losing the game with such a sequence is impossible.
+    Also, a tile for constants would have to be spawned.
+
+    a completely different gamemode logic is to be made to implement them.
+
+    "arithmeticum convivium":
     
-    class GeometricProg(Sequence):
+    pass
 
-        
-        These have a common ratio and a first term.
-        
-        For games in 2048 or Threes' form (sum two equals to get the next term),
-        Ratio determines the amount of tiles you must merge for next term.
-        
-        Thus, for these kind of games, we ought to have a common ratio of 2.
-        An option of 3 for more hardcore games.
-        With 4 upwards, games in this form will simply become insufferable.
 
-        For more varied geometric sequences,
-        those with common ratios of 4 onwards
-        ought to be in Arithmeticum Convivium form.
-        
-        A special arithmeticum convivium can be made
-        With arithmetic and geometric sequences in a same game.
-        
+class GeometricProg(Sequence):
 
-        def __init__(self, first_term, ratio):
-            if first_term == 0 or ratio == 0:
-                raise ValueError(f"First term: {first_term} or ratio: {ratio} must never be 0.")
-            elif ratio == 1:
-                raise ValueError(f"Ratio must never be 1.")
-            else:
-                super().__init__(first_term)
-                self._ratio = ratio
-    """
+    
+    These have a common ratio and a first term.
+    
+    For games in 2048 or Threes' form (sum two equals to get the next term),
+    Ratio determines the amount of tiles you must merge for next term.
+    
+    Thus, for these kind of games, we ought to have a common ratio of 2.
+    An option of 3 for more hardcore games.
+    With 4 upwards, games in this form will simply become insufferable.
+
+    For more varied geometric sequences,
+    those with common ratios of 4 onwards
+    ought to be in Arithmeticum Convivium form.
+    
+    A special arithmeticum convivium can be made
+    With arithmetic and geometric sequences in a same game.
+    
+
+    def __init__(self, first_term, ratio):
+        if first_term == 0 or ratio == 0:
+            raise ValueError(f"First term: {first_term} or ratio: {ratio} must never be 0.")
+        elif ratio == 1:
+            raise ValueError(f"Ratio must never be 1.")
+        else:
+            super().__init__(first_term)
+            self._ratio = ratio
+"""
