@@ -17,16 +17,6 @@ class Sequence(ABC):
     This must be our main method
     """
 
-    def __init__(self, first_term) -> None:
-        if not isinstance(first_term, int):
-            raise TypeError(f"Must be an integer sequence; first term: {first_term} violates.")
-        self._first_term = first_term
-        self._current_term = first_term
-        self._current_term_index = 0
-        #when instatiating a new sequence object,
-        #the current term will always be the first
-        #(indexing will start from 0 for standardization)
-
     @abstractmethod
     def _generate_sequence(self):
         pass
@@ -88,6 +78,7 @@ class TwoTerm(Sequence):
     """
     
     def __init__(self, index_relation: int = 0, operation: str = '+', fst_terms: list[int] = [2], index_of_last=10) -> None:
+        
         self._terms: tuple[int,...] = self._generate_sequence (
             fst_terms,
             index_relation,
